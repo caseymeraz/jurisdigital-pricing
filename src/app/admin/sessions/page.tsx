@@ -97,6 +97,22 @@ export default function AdminSessionsPage() {
                       >
                         Internal
                       </a>
+                      <button
+                        onClick={async () => {
+                          const res = await fetch('/api/admin/quotes', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ fromSessionId: s.id }),
+                          })
+                          if (res.ok) {
+                            const quote = await res.json()
+                            router.push(`/admin/quotes/${quote.id}`)
+                          }
+                        }}
+                        className="text-jd-gold hover:underline text-xs font-medium"
+                      >
+                        Build Quote
+                      </button>
                       <a
                         href={`/results/${s.accessToken}`}
                         target="_blank"

@@ -71,9 +71,15 @@ export default async function InternalResultsPage({
           </div>
           <div className="flex gap-3">
             <a
+              href={`/api/admin/quotes/from-session/${session.id}`}
+              className="px-4 py-2 bg-jd-gold text-jd-navy rounded font-medium text-sm hover:bg-yellow-500"
+            >
+              Build Quote
+            </a>
+            <a
               href={`/results/${session.accessToken}`}
               target="_blank"
-              className="px-4 py-2 bg-jd-gold text-jd-navy rounded font-medium text-sm hover:bg-yellow-500"
+              className="px-4 py-2 border border-gray-500 rounded text-sm hover:border-gray-300"
             >
               View Client Link
             </a>

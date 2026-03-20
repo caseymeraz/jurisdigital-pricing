@@ -111,6 +111,48 @@ model QuestionnaireSession {
   @@map("questionnaire_sessions")
 }
 
+model Quote {
+  id             String   @id @default(cuid())
+  accessToken    String   @unique @default(cuid())
+  status         String   @default("draft") // draft, sent, accepted, expired
+  title          String   @default("Marketing Proposal")
+
+  // Client info
+  firmName       String?
+  contactName    String?
+  contactEmail   String?
+  contactPhone   String?
+  marketCity     String?
+  marketState    String?
+  marketTier     String?
+
+  // Quote content
+  packageName    String?
+  contractLength String?
+  lineItems      Json     @default("[]") // QuoteLineItem[]
+  adSpendTier    Int?
+  adSpendMonthly Int?
+  adSpendFee     Int?
+  notes          String?  // internal notes
+  clientMessage  String?  // message shown on client view
+  validUntil     DateTime?
+
+  // Computed totals stored for quick access
+  totalMRC       Int      @default(0)
+  totalSetup     Int      @default(0)
+
+  // Link to questionnaire session if created from one
+  sessionId      String?
+
+  createdBy      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("quotes")
+}
+
 model AdminUser {
   id           String   @id @default(cuid())
   username     String   @unique

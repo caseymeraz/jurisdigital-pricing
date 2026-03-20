@@ -113,6 +113,14 @@ export default function AdminPage() {
           </button>
 
           <button
+            onClick={() => router.push('/admin/quotes')}
+            className="bg-white rounded-lg shadow p-6 text-left hover:shadow-lg transition-shadow border-2 border-jd-gold"
+          >
+            <h3 className="font-bold text-lg text-jd-navy">Quote Builder</h3>
+            <p className="text-gray-500 text-sm mt-1">Build, customize, and send client proposals with full pricing control</p>
+          </button>
+
+          <button
             onClick={() => router.push('/admin/pricing')}
             className="bg-white rounded-lg shadow p-6 text-left hover:shadow-lg transition-shadow"
           >
