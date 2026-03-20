@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model PricingConfig {
+  id          String   @id @default(cuid())
+  department  String   // Advertising, SEO, Web/Dev, Design, Content
+  serviceName String
+  serviceType String   // tiered, flat, percentage, package
+  pricing     Json     // flexible JSON: tiers, flat amounts, percentages, etc.
+  description String   @default("")
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("pricing_configs")
+}
+
+model Market {
+  id             String   @id @default(cuid())
+  city           String
+  state          String
+  stateCode      String
+  population     Int      @default(0)
+  msaName        String?
+  msaPopulation  Int?
+  computedTier   String   // major, mid, small
+  adminTierOverride String? // admin can override
+  latitude       Float?
+  longitude      Float?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  exclusivities  MarketExclusivity[]
+
+  @@unique([city, stateCode])
+  @@index([stateCode])
+  @@index([population])
+  @@index([computedTier])
+  @@map("markets")
+}
+
+model MarketExclusivity {
+  id           String   @id @default(cuid())
+  marketId     String
+  practiceArea String
+  clientName   String
+  lockedAt     DateTime @default(now())
+  lockedBy     String?
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  market       Market   @relation(fields: [marketId], references: [id], onDelete: Cascade)
+
+  @@unique([marketId, practiceArea])
+  @@map("market_exclusivities")
+}
+
+model QuestionnaireSession {
+  id               String   @id @default(cuid())
+  accessToken      String   @unique @default(cuid())
+  status           String   @default("in_progress") // in_progress, completed, reviewed
+
+  // Step 1: Practice Areas
+  practiceAreas    Json?    // string[]
+
+  // Step 2: Firm Details
+  firmName         String?
+  attorneyCount    Int?
+  locationCount    Int?
+
+  // Step 3: Target Market
+  marketId         String?
+  marketCity       String?
+  marketState      String?
+  marketTier       String?
+
+  // Step 4: Current Marketing
+  currentMarketing Json?    // string[]
+
+  // Step 5: Goals
+  growthGoal       String?
+  competitorInfo   String?
+  urgency          String?
+  budgetRange      String?
+
+  // Step 6: Contact Info
+  contactName      String?
+  contactEmail     String?
+  contactPhone     String?
+
+  // Recommendation Output
+  recommendation   Json?    // full recommendation object
+  marginBreakdown  Json?    // margin details
+  adminNotes       String?
+  overrideData     Json?    // admin overrides
+
+  completedAt      DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("questionnaire_sessions")
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  @@map("admin_users")
+}
